@@ -21,7 +21,7 @@ source "hyperv-iso" "centos63" {
 
     boot_command = [
         "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter><wait>",  # start the install
-        "<wait35s><enter><wait>" # press OK for unsupported hardware
+        "<wait35s><enter><wait>" # press OK for unsupported hardware because this isn't supported in kickstart until CentOS 6.4
     ]
 
     shutdown_command = "shutdown -P now"

@@ -58,7 +58,6 @@ gpgcheck=1
 gpgkey=http://olcentgbl.trafficmanager.net/openlogic/6/openlogic/x86_64/OpenLogic-GPG-KEY
 EOF
 
-
 # Modify yum
 echo "http_caching=packages" >> /etc/yum.conf
 yum clean all
@@ -66,23 +65,23 @@ yum clean all
 # Fix root certs
 yum reinstall -y ca-certificates
 
-# Install packages (from OpenLogic base)
+# Install packages (based on https://github.com/openlogic/AzureBuildCentOS/blob/master/ks/azure/centos65.ks)
+yum groupinstall -y base
+yum groupinstall -y core
+yum groupinstall -y server-platform
+# @console-internet \
+# @debugging \
+# @directory-client \
+# @hardware-monitoring \
+# @java-platform \
+# @large-systems \
+# @network-file-system-client \
+# @performance \
+# @perl-runtime \
+
 yum install -y \
-    @base \
-    @console-internet \
-    @core \
-    @debugging \
-    @directory-client \
-    @hardware-monitoring \
-    @java-platform \
-    @large-systems \
-    @network-file-system-client \
-    @performance \
-    @perl-runtime \
-    @server-platform \
-    ntp \
     dnsmasq \
-    cifs-utils \
+    # cifs-utils \
     sudo \
     python-pyasn1 \
     parted \
@@ -91,6 +90,9 @@ yum install -y \
 yum remove -y dracut-config-rescue
 
 # services --enabled="sshd,waagent,ntpd,dnsmasq,hypervkvpd"
+chkconfig waagent on
+chkconfig ntpd on
+chkconfig dnsmasq on
 
 # Configure ssh
 sed -i 's/^#\(ClientAliveInterval\).*$/\1 180/g' /etc/ssh/sshd_config
