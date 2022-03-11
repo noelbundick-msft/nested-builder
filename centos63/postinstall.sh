@@ -86,8 +86,9 @@ yum install -y \
     sudo \
     python-pyasn1 \
     parted \
-    WALinuxAgent \
-    -dracut-config-rescue
+    WALinuxAgent
+
+yum remove -y dracut-config-rescue
 
 # services --enabled="sshd,waagent,ntpd,dnsmasq,hypervkvpd"
 
