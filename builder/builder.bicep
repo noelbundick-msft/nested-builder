@@ -3,7 +3,7 @@ param adminUsername string = 'azureuser'
 @secure()
 param adminPassword string
 
-param vmSize string = 'Standard_D2s_v5'
+param vmSize string = 'Standard_D4s_v5'
 param location string = resourceGroup().location
 
 resource pip 'Microsoft.Network/publicIPAddresses@2021-05-01' = {
@@ -88,6 +88,9 @@ resource nic 'Microsoft.Network/networkInterfaces@2021-05-01' = {
 resource vm 'Microsoft.Compute/virtualMachines@2021-11-01' = {
   name: 'builder'
   location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     hardwareProfile: {
       vmSize: vmSize
@@ -164,3 +167,5 @@ resource jit 'Microsoft.Security/locations/jitNetworkAccessPolicies@2020-01-01' 
     ]
   }
 }
+
+output principalId string = vm.identity.principalId

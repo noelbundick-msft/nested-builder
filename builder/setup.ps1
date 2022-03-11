@@ -19,3 +19,11 @@ curl.exe -L https://releases.hashicorp.com/packer/1.8.0/packer_1.8.0_windows_amd
 $shell = New-Object -ComObject Shell.Application
 $files = $shell.Namespace((get-item .\packer.zip).FullName).Items()
 $shell.NameSpace('C:\Windows\system32\').CopyHere($files)
+
+# Download azcopy
+curl.exe -L https://aka.ms/downloadazcopy-v10-windows -o azcopy.zip
+$shell = New-Object -ComObject Shell.Application
+$files = $shell.Namespace((get-item .\azcopy.zip).FullName).Items()
+$shell.NameSpace('C:\Windows\temp\').CopyHere($files)
+Copy-Item -Path 'C:\Windows\Temp\azcopy_windows_amd64_10.14.0\azcopy.exe' -Destination 'C:\Windows\system32\azcopy.exe'
+azcopy login --identity

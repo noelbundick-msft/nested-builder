@@ -15,3 +15,12 @@ module builder 'builder.bicep' = {
     adminPassword: 'Password#1234'
   }
 }
+
+module storage 'storage.bicep' = {
+  name: 'storage'
+  scope: rg
+  params: {
+    location: location
+    principalId: builder.outputs.principalId
+  }
+}

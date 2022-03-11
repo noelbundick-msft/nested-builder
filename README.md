@@ -29,4 +29,48 @@ Use Packer to automate installing Linux from an ISO, configuring it for Azure, a
 ```powershell
 cd centos63
 packer build centos63.pkr.hcl
+azcopy copy '.\output-centos63\Virtual Hard Disks\packer-centos63.vhd' https://builder34n3pk.blob.core.windows.net/images/centos63.vhd
 ```
+
+In your codespace, create an image from the exported VHD
+
+```shell
+az image create -g builder -n centos63 --os-type Linux --source https://builder34n3pk.blob.core.windows.net/images/centos63.vhd
+```
+
+Now create a VM from the image
+
+```shell
+IMAGE_ID=$(az image show -g builder -n centos63 --query id -o tsv)
+az group create -n test1 -l westus3
+az vm create -n test1 -g test1 --image $IMAGE_ID
+```
+
+## Overview
+
+* `/builder` - stands up a builder VM with
+  * Nested virtualization
+  * Just-in-time RDP access
+  * Auto-shutdown
+  * `setup.ps1` - PowerShell setup steps
+    * Install Hyper-V and DHCP
+    * Configure a network / NAT
+    * Setup DHCP
+    * Install Packer
+    * Install azcopy
+* `/centos63` - configuration to create a CentOS 6.3 image via Packer
+  * `centos63.pkr.hcl` - the Packer configuration with
+    * Pull/cache an ISO
+    * Export to legacy VHD format for Azure
+    * Serve a directory via HTTP
+    * Automate pressing the OK button for unsupported hardware
+    * `ks.cfg` - RHEL/CentOS OS installation
+      * Set input/locale
+      * Use cdrom (ISO) sources
+      * Install Linux Integration Services (needed for Packer SSH)
+    * `postinstall.sh` - install script run by Packer
+      * Customize kernel params
+      * Update repos to point to archive.org for CentOS 6.3
+      * Add OpenLogic repo
+      * Configure networking
+      * Deprovision to prepare for Azure
