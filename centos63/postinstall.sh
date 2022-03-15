@@ -6,6 +6,9 @@ sed -i 's/ rhgb//g' /boot/grub/grub.conf
 sed -i 's/ quiet//g' /boot/grub/grub.conf
 sed -i 's/ crashkernel=auto//g' /boot/grub/grub.conf
 
+# Update hyperv_pvdrivers.conf - only 6.4 and above are supported for ata_piix - ignore-install
+sed -i 's/ ||/; /' /etc/modprobe.d/hyperv_pvdrivers.conf 
+
 cat <<EOF > /etc/yum.repos.d/CentOS-Base.repo
 # CentOS-Base.repo
 #
@@ -79,15 +82,13 @@ yum groupinstall -y server-platform
 # @performance \
 # @perl-runtime \
 
-yum install -y \
-    dnsmasq \
-    # cifs-utils \
-    sudo \
-    python-pyasn1 \
-    parted \
-    WALinuxAgent
+yum install -y dnsmasq
+yum install -y sudo
+yum install -y python-pyasn1
+yum install -y parted
+yum install -y WALinuxAgent
 
-yum remove -y dracut-config-rescue
+# yum remove -y dracut-config-rescue
 
 # services --enabled="sshd,waagent,ntpd,dnsmasq,hypervkvpd"
 chkconfig waagent on
