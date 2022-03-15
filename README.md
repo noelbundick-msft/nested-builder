@@ -41,14 +41,9 @@ az image create -g builder -n centos63 --os-type Linux --source https://builder3
 Now create a VM from the image
 
 ```shell
-ADMIN_USER=azureuser
-ADMIN_PASS=Password#1234
-RESOURCE_GROUP=josh-test-3
-VM_NAME=test1
 IMAGE_ID=$(az image show -g builder-josh -n centos63-2 --query id -o tsv)
 az group create -n $RESOURCE_GROUP -l westus3
-az vm create -n $VM_NAME -g $RESOURCE_GROUP --image $IMAGE_ID --generate-ssh-keys
-az vm user update -u $ADMIN_USER -p $ADMIN_PASS -g $RESOURCE_GROUP -n $VM_NAME
+az vm create -n $VM_NAME -g $RESOURCE_GROUP --image $IMAGE_ID
 ```
 
 ## Overview
