@@ -48,7 +48,7 @@ VM_NAME=test1
 IMAGE_ID=$(az image show -g builder -n centos63 --query id -o tsv)
 az group create -n $RESOURCE_GROUP -l westus3
 az vm create -n $VM_NAME -g $RESOURCE_GROUP --image $IMAGE_ID
-az vm user update -u $ADMIN_USER -p $MSADMIN_PASS -g $RESOURCE_GROUP -n $VM_NAME`
+az vm user update -u $ADMIN_USER -p $ADMIN_PASS -g $RESOURCE_GROUP -n $VM_NAME`
 ```
 
 ## Overview
