@@ -82,15 +82,16 @@ yum groupinstall -y server-platform
 # @performance \
 # @perl-runtime \
 
-yum install -y dnsmasq
-yum install -y sudo
-yum install -y python-pyasn1
-yum install -y parted
-yum install -y WALinuxAgent
+yum install -y \
+    dnsmasq \
+    sudo \
+    python-pyasn1 \
+    parted \
+    WALinuxAgent
+    # cifs-utils \
 
 # yum remove -y dracut-config-rescue
 
-# services --enabled="sshd,waagent,ntpd,dnsmasq,hypervkvpd"
 chkconfig waagent on
 chkconfig ntpd on
 chkconfig dnsmasq on

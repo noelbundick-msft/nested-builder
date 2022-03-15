@@ -35,15 +35,16 @@ azcopy copy '.\output-centos63\Virtual Hard Disks\packer-centos63.vhd' https://b
 In your codespace, create an image from the exported VHD
 
 ```shell
-az image create -g builder -n centos63 --os-type Linux --source https://builder34n3pk.blob.core.windows.net/images/centos63.vhd
+az group create -n images -l westus3
+az image create -g images -n centos63 --os-type Linux --source https://builder34n3pk.blob.core.windows.net/images/centos63.vhd
 ```
 
 Now create a VM from the image
 
 ```shell
-IMAGE_ID=$(az image show -g builder-josh -n centos63-2 --query id -o tsv)
-az group create -n $RESOURCE_GROUP -l westus3
-az vm create -n $VM_NAME -g $RESOURCE_GROUP --image $IMAGE_ID
+IMAGE_ID=$(az image show -g images -n centos63 --query id -o tsv)
+az group create -n test1 -l westus3
+az vm create -n test1 -g test1 --image $IMAGE_ID
 ```
 
 ## Overview
