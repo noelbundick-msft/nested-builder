@@ -2,6 +2,7 @@
   "recommendations": [
     "ms-azuretools.vscode-bicep",
     "msazurermtools.azurerm-vscode-tools",
-    "4ops.packer"
+    "4ops.packer",
+    "hashicorp.terraform"
   ]
 }
