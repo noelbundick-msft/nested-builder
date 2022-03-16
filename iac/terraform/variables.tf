@@ -1,5 +1,9 @@
-variable "rg_name" {
+variable "builder_rg_name" {
   default = "builder"
+}
+
+variable "images_rg_name" {
+  default = "images"
 }
 
 variable "location" {

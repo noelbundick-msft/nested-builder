@@ -1,33 +1,16 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source = "hashicorp/azurerm"
-      version = "=2.99.0"
-    }
-  }
-}
-
-provider "azurerm" {
-  features {}
-}
-
-resource "azurerm_resource_group" "rg" {
-  name = var.rg_name
-  location = var.location
-}
 
 resource "azurerm_public_ip" "pip" {
   name = "builder"
-  location = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location = azurerm_resource_group.builder_rg.location
+  resource_group_name = azurerm_resource_group.builder_rg.name
 
   allocation_method = "Dynamic"
 }
 
 resource "azurerm_network_security_group" "nsg" {
   name = "default"
-  location = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location = azurerm_resource_group.builder_rg.location
+  resource_group_name = azurerm_resource_group.builder_rg.name
 
   security_rule {
     name = "DenyAllInbound"
@@ -44,15 +27,15 @@ resource "azurerm_network_security_group" "nsg" {
 
 resource "azurerm_virtual_network" "vnet" {
   name = "vnet"
-  location = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location = azurerm_resource_group.builder_rg.location
+  resource_group_name = azurerm_resource_group.builder_rg.name
 
   address_space = ["10.0.0.0/24"]
 }
 
 resource "azurerm_subnet" "default" {
   name = "default"
-  resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = azurerm_resource_group.builder_rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
 
   address_prefixes = ["10.0.0.0/24"]
@@ -65,8 +48,8 @@ resource "azurerm_subnet_network_security_group_association" "example" {
 
 resource "azurerm_network_interface" "nic" {
   name = "builder"
-  location = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location = azurerm_resource_group.builder_rg.location
+  resource_group_name = azurerm_resource_group.builder_rg.name
 
   ip_configuration {
     name = "ip0"
@@ -78,8 +61,8 @@ resource "azurerm_network_interface" "nic" {
 
 resource "azurerm_windows_virtual_machine" "vm" {
   name = "builder"
-  location = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location = azurerm_resource_group.builder_rg.location
+  resource_group_name = azurerm_resource_group.builder_rg.name
 
   size = var.vm_size
   computer_name = "builder"
@@ -110,7 +93,7 @@ resource "azurerm_windows_virtual_machine" "vm" {
 }
 
 resource "azurerm_dev_test_global_vm_shutdown_schedule" "auto_shutdown" {
-  location = azurerm_resource_group.rg.location
+  location = azurerm_resource_group.builder_rg.location
   virtual_machine_id = azurerm_windows_virtual_machine.vm.id
 
   enabled = true
@@ -120,19 +103,3 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "auto_shutdown" {
     enabled = false
   }
 }
-
-# resource "azurerm_virtual_machine_extension" "configure" {
-#   name = "configure"
-#   virtual_machine_id = azurerm_windows_virtual_machine.vm.id
-#   publisher = "Microsoft.Azure.Extensions"
-#   type = "CustomScript"
-#   type_handler_version = "2.0"
-
-#   settings = <<SETTINGS
-#     {
-#       "commandToExecute": "powershell -encodedCommand ${textencodebase64(file("../setup.ps1"), "UTF-16LE")}"
-#     } 
-# SETTINGS
-# }
-
-# TODO: JIT policy (https://github.com/hashicorp/terraform-provider-azurerm/issues/3661)
