@@ -11,10 +11,10 @@ In a Codespace, deploy the builder VM with nested virtualization enabled. Exampl
 az login --use-device-code
 
 # [Option 1] Deploy the builder VM (Bicep)
-az deployment sub create -l westus3 -f ./iac/bicep/main.bicep
+az deployment sub create -l westus3 -f ./builder/bicep/main.bicep
 
 # [Option 2] Deploy the builder VM (Terraform)
-pushd iac/terraform
+pushd builder/terraform
 terraform init
 terraform apply
 popd
@@ -34,12 +34,20 @@ az vm run-command invoke --command-id RunPowerShellScript -g builder -n builder 
 RDP to the builder VM and open PowerShell as Administrator. Clone this repo, then use Packer to automate installing Linux from an ISO, configuring it for Azure, and exporting it to a VHD
 
 ```powershell
+# Ensure that LF doesn't get converted to CRLF on clone
+git config --global core.autocrlf input
+
 # Clone the repo
 git clone https://github.com/noelbundick-msft/nested-builder
 
 # Build a CentOS 6.3 image
 cd nested-builder/centos63
 packer build centos63.pkr.hcl
+
+# Use Managed Identity for azcopy
+azcopy login --identity
+
+# Upload the VHD to blob storage
 azcopy copy '.\output-centos63\Virtual Hard Disks\packer-centos63.vhd' https://builder34n3pk.blob.core.windows.net/images/centos63.vhd
 ```
 

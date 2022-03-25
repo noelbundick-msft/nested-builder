@@ -14,9 +14,3 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 
 # Install tools
 choco install -y packer azcopy10 git
-
-# Ensure that LF doesn't get converted to CRLF on clone
-git config --global core.autocrlf input
-
-# Use Managed Identity for azcopy
-azcopy login --identity
